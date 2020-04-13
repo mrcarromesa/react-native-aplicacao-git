@@ -1,377 +1,403 @@
-<h1>Preparando o ambiente</h1>
+<h1>Aplicação Git</h1>
 
-- como preparar o ambiente:
+- Primeiro trabalhar na parte de estilização, do arquivo `src/pages/Main/index.js`
 
-- [Ambiente React Native](https://docs.rocketseat.dev/ambiente-react-native/introducao)
-
-- Para mac OS instalar o cocoapods:
-
-- [CocoaPods](https://cocoapods.org)
-
-- Adicionar o react-native-cli:
-
-- [React Native CLI](https://github.com/react-native-community/cli)
-
-- Adicionar de forma global:
+- Instalar a dependencia:
 
 ```bash
-yarn add react-native-cli
+yarn add react-native-vector-icons
 ```
 
----
+**Para IOS**
 
-<h2>Iniciar o projeto</h2>
+- Para funcionar no IOS é necessário realizar alguns passos a mais:
 
-- Executar o seguinte comando:
+- ir na documentação da lib [Vector Icons](https://github.com/oblador/react-native-vector-icons)
 
-```bash
-react-native init NOME_DO_APP
+- ir em Instalations > iOS [iOS](https://github.com/oblador/react-native-vector-icons#ios)
+
+- Procurar por "List of all available fonts to copy & paste in info.plist" haverá algo como isso:
+
+```xml
+<key>UIAppFonts</key>
+<array>
+  <string>AntDesign.ttf</string>
+  <string>Entypo.ttf</string>
+  <string>EvilIcons.ttf</string>
+  <string>Feather.ttf</string>
+  <string>FontAwesome.ttf</string>
+  <string>FontAwesome5_Brands.ttf</string>
+  <string>FontAwesome5_Regular.ttf</string>
+  <string>FontAwesome5_Solid.ttf</string>
+  <string>Foundation.ttf</string>
+  <string>Ionicons.ttf</string>
+  <string>MaterialIcons.ttf</string>
+  <string>MaterialCommunityIcons.ttf</string>
+  <string>SimpleLineIcons.ttf</string>
+  <string>Octicons.ttf</string>
+  <string>Zocial.ttf</string>
+</array>
 ```
 
----
+- No projeto localizar a pasta `ios/NOME_DO_PROJETO/info.plist` antes da tag `</dict>`, e escolher as fontes que irá utilizar e descartar as outras.
 
-<h2>Executar o projeto</h2>
-
-- Para android:
-**O Emulador deve estar aberto**
-- Executar o comando:
-
-```bash
-react-native run-android
-```
-
-- Para IOS:
-
-```bash
-react-native run-ios
-```
-- Após irá abrir um outro terminal, caso acidentalmente feche esse terminal, ou quando for executar o projeto novamente, só abrir o emulador onde a aplicação está instalada e executar o comando:
-
-```bash
-react-native start
-```
-
-----
-
-<h2>Refresh</h2>
-
-- Funções especiais:
-
-- command + D, abre o menu
-
-- command + R, dá refresh
-
-- Para ativar o fast refresh que irá atualizar sempre que houver alguma atualização:
-
-- command + D, abre o menu, e seleciona o Enable Fast Refresh, caso esteja desabilitado.
-
-
----
-
-<h2>ESLint, Prettier, Editor Config</h2>
-
-- Gerar o arquivo editorconfig:
-
-```js
-root = true
-
-[*]
-end_of_line = lf
-indent_style = space
-indent_size = 2
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-```
-
-- Antes de instalar o eslint, remova o arquivo `.eslintrc.js`
-
-- Executar no terminal:
-
-```bash
-yarn add eslint -D
-```
-
-- Após instalado executar:
-
-```bash
-yarn eslint --init
-```
-
-- Responder as perguntas:
-
-- How would you like to use ESLint?
-
-- To check syntax, find problems, and enforce code style
-
-- What type of modules does your project use?
-
-- JavaScript modules (import/export)
-
-- Which framework does your project use?
-
-- React
-
-- Where does your code run?
-
-**Remover todos**
-
-- How would you like to define a style for your project?
-
-- Use a popular style guide
-
-- Which style guide do you want to follow?
-
-- Airbnb: https://github.com/airbnb/javascript
-
-- What format do you want your config file to be in?
-
-- JavaScript
-
-- Would you like to install them now with npm?
-
-- Y
-
-- Remover o arquivo package-look.json
-
-- Executar o comando `yarn`
-
-- Instalar mais algumas extensões para trabalhar com o ESLint:
-
-- Executar o seguinte no terminal:
-
-```bash
-yarn add prettier eslint-config-prettier eslint-plugin-prettier babel-eslint -D
-```
-
-- No arquivo `.eslintrc.js` alterar o conteúdo para:
-
-```js
-module.exports = {
-  env: {
-    es6: true,
-  },
-  extends: [
-    'airbnb',
-    'prettier',
-    'prettier/react',
-  ],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
-  parser: 'babel-eslint',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 2018,
-    sourceType: 'module',
-  },
-  plugins: [
-    'react',
-    'prettier'
-  ],
-  rules: {
-    'prettier/prettier': 'error',
-    'react/jsx-filename-extension': [
-      'warn',
-      {
-        extensions: ['.jsx', 'js']
-      }
-    ],
-    'import/prefer-default-export': 'off'
-  },
-};
-
-```
-
-**Nos arquivos a parte dos styles sempre é melhor vir antes que o component**
-
-- Criar o arquivo `.prettierrc` com o seguinte conteudo:
-
-```js
-{
-  "singleQuote": true,
-  "trailingComma": "es5"
-}
-
-```
-
-- Provavelmente após todos esse processos irá aparecer um monte de erros na tela do dispositivo, para corrigir, encerre o processo no terminal e execute o comando:
-
-```bash
-react-native start --reset-cache
-```
-
-- Dessa forma irá abrir o bundle porém irá resetar as dependencias
-
-- E sempre que houver problemas sem explicação só executar esse comando ou executar o `react-native run-PLATAFORMA`
-
----
-
-<h2>Reactotron<h2>
-
-- Para utilizar como debug:
-
-- [reactotron](https://github.com/infinitered/reactotron)
-
-- Ir em `Quick start for React Native` [React Native](https://github.com/infinitered/reactotron/blob/master/docs/quick-start-react-native.md)
-
-- Realizar o download da versão que não seja beta:
-
-[Release](https://github.com/infinitered/reactotron/releases)
-
-- Para mac pode utilizar o dmg
-
-- No projeto adicionar a dependencia:
-
-```bash
-yarn add reactotron-react-native
-```
-
----
-<h2>Organizar estrutura de pastas</h2>
-
-- Criar a pasta `src` e adicionar um arquivo `index.js` e adicionar o código que está no `App.js` e remover o arquivo `App.js` e no arquivo `index.js` que está na raiz importar o `App` de `src/index.js`:
-
-```js
-import App from './src';
-```
-
-- Criar o arquivo `src/config/ReactotronConfig.js` com o seguinte conteudo:
-
-
-```js
-import Reactotron from 'reactotron-react-native';
-
-if (__DEV__) {
-  const tron = Reactotron.configure().useReactNative().connect();
-
-  console.tron = tron;
-
-  // toda vez que dermos um refresh na aplicação será limpo o console
-  tron.clear();
-}
-```
-
-- No arquivo `.eslintrc.js` adicionar a variavel global `__DEV__` como readonly.
-
-- No arquivo `src/index.js` adicionar o import:
-
-```js
-import './config/ReactotronConfig';
-```
-
-**Problemas**
-
-- Caso for Android em USB, pode ser necessário executar o seguinte comando:
-
-```bash
-adb reverse tcp:9090 tcp:9090
-```
-
-- Em alguns caso pode ser necessário no arquivo `ReactotronConfig.js` fazer o seguinte:
-
-```js
-const tron = Reactotron.configure({host: 'IP_DA_MAQUINA'}).useReactNative().connect();
-```
-
-- Quando precisarmos executar o log podemos utilizar o comando:
-
-```js
-console.tron.log();
-console.tron.warn();
-```
-
----
-
-Navegação
-
-No React Native a parte de navegação é diferente da parte de navegação do React da web
-
-- Criar as paginas: `src/pages/Main/index.js` e `src/pages/User/index.js`
-
-- Criar o arquivo para rotas `src/routes.js`
-
-- Instalar a navegação:
-
-```bash
-yarn add @react-navigation/native
-```
-
-- A dependencia do react-navigation muda constantemente por isso é sempre bom dar uma conferida na documentação para verificar as dependencias a serem instaladas.
-
-- [React Navigation](https://reactnavigation.org/docs/getting-started)
-
-- é bom verificar o que ele pede, no caso nesse projeto foi instalado também:
-
-```bash
-yarn add react-native-reanimated react-native-gesture-handler react-native-screens react-native-safe-area-context @react-native-community/masked-view
-```
-
-- E depois precisei acessar a pasta `ios/` e executar o comando:
+- Depois acessar a pasta `ios/` e executar o comando:
 
 ```bash
 pod install
 ```
 
-- Para surtir efeitos nessas alterações é necessário executar novamente o comando:
+- E para efetivar as alterações executar o comando:
 
-```bash
-react-native run-PLATAFORMA
+```
+react-native run-ios
 ```
 
-- Instalar a seguinte dependencia conforme [stack navigator](https://reactnavigation.org/docs/hello-react-navigation):
+**/Para IOS**
 
-```bash
-yarn add @react-navigation/stack
-```
+---
 
-- No arquivo `src/routes.js` há um exemplo de como foi utilizado o `Stack Navigator` seguindo algumas opções de [createStackNavigator](https://reactnavigation.org/docs/stack-navigator#example)
+**Para android**
 
-**Importante: Para não quebrar a aplicação em produção é necessário adicionar a importação no arquivo de rotas:**
+- Acessar na documentação [Android](https://github.com/oblador/react-native-vector-icons#android)
+
+- Acessar o arquivo `android/app/build.gradle` adicionar o seguinte no final do arquivo:
 
 ```js
-import 'react-native-gesture-handler';
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ] // Name of the font files you want to copy
+]
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+```
+
+- em `iconFontNames` inserir as fontes que serão utilizadas.
+
+e por fim executar o comando:
+
+```bash
+react-native run-android
+```
+
+**/Para android**
+
+- Para utilizar os icones importar no arquivo o seguinte:
+
+```js
+import Icon from 'react-native-vector-icons/MaterialIcons';
+```
+
+- Para saber qual icone utilizar, veja a documentação:
+
+[react-native-vector-icons directory](https://oblador.github.io/react-native-vector-icons/)
+
+- Exemplo de com utilizar em `src/pages/Main/index.js`
+
+- No arquivo `src/pages/Main/styles` será utilizado um outro component no lugar do botão padrão, o qual tem um efeito de ripple:
+
+```js
+import { RectButton } from 'react-native-gesture-handler';
+```
+
+- E para estilização utilizamos:
+
+```js
+export const SubmitButton = styled(RectButton)``;
+```
+
+
+---
+
+<h2>TextInput</h2>
+
+- Alterar label do tecla enter do teclado:
+
+```js
+<TextInput
+  returnKeyType="OPCAO_AQUI"
+/>
+```
+
+- Alterar action da tecla enter do teclado:
+
+```js
+<TextInput
+  onSubmitEditing={() => {}}
+>
 ```
 
 ---
 
-<h2>Alterar Status Bar</h2>
+<h2>Axios</h2>
 
-- Para tal importar no arquivo princial no caso do projeto `src/index.js` e adicionar:
+- Chamadas a API, pode ser utilizada a mesma da web:
 
-```js
-import { StatusBar } from 'react-native';
+```bash
+yarn add axios
 ```
 
-- e utilizar da seguinte forma:
+- Criara o arquivo `src/sevices/api.js` e adicionar o código:
 
 ```js
-return (
-    <>
-      <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
-      <Routes />
-    </>
-  );
+import axios from 'axios';
+
+
+export default api = axios.create({
+  baseUrl: 'https://api.github.com'
+});
 ```
 
-- Basicamente o prop `backgroundColor` é utilizado para android, para alterar a cor da status bar.
+- importa a api na pagina `Main`:
+
+```js
+import api from '../../services/api';
+```
 
 ---
 
-<h2>Styled Components</h2>
+<h2>Ocultar teclado</h2>
 
-- Instalação:
+- Import `Keyboard` de `react-native`:
 
-```bash
-yarn add styled-components
+```js
+import { Keyboard } from 'react-native';
 ```
 
-- Um exemplo pode ser visto em `src/pages/Main/styles.js`
+- Chame a function:
 
-- No caso só pode ser utilizado components do Native, e ainda é necessário estilizar component por component não pode ser encadeado.
+```js
+Keyboard.dismiss();
+```
 
-- A vantagem é que consigo utilizar o css normal como na web.
+
+---
+
+<h2>Criando Listagem de usuários</h2>
+
+No React Native diferente da web, não consigo trabalhar com `ul li`, e nem utilizar o `map` para listas, pois o react-native tem formas próprias para trabalhar com listas pois já insere o comonente de scroll.
+
+- Iniialmente iremos inserir o component `FlatList`
+
+- Esse componente aceita alguns parametros:
+
+```js
+<FlatList
+  data={dataArray}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <View>
+      <Text>{item.nome}</Text>
+    </View>
+  )}
+/>
+```
+
+Propriedades do FlatList
+- `data`: Informar o array, será os dados que serão listados;
+- `keyExtractor`: é o mesmo que a propriedade `key` na web, que precisa ser unico dentro de um loop; ele recebe uma função, que irá pegar cada item dos dados informados na propriedade `data`, irá pecorrer e eu preciso informar o item que é unico nesses dados.
+- `renderItem`: Recebe uma function que será inserido conteúdo JSX, dentro dessa function posso desestruturar e passar o elemento item que será o item a ser interado.
+
+- Adicionando url ao componente imagem:
+
+```js
+<Image source={{uri: 'http://...'}} />
+```
+
+- Para eu inserir uma url para `Image` preciso seguir conforme o exemplo acima.
+
+---
+
+<h2>Help sobre estilização</h2>
+
+- O `text-align: center;` é necessário mesmo com `align-items: center`, pois o align-items só altera o component em si, o text-align, trabalha diretamente o texto.
+
+- Para o component `Text` podemos utilizar uma propriedade chamada: `numberOfLines: 2` que só permite ser exibido no máximo X linhas e insere automáticamente `...`, no final:
+
+- Ex. Utilizando styled-components/native
+
+```js
+export const Bio = styled.Text.attrs({
+  numberOfLines: 2,
+})`
+  font-size: 13px;
+  line-height: 18px;
+  color: #999;
+  margin-top: 5px;
+  text-align: center;
+`;
+```
+
+- Estilizar o placeholder de um TextEdit com `styled-components/native`:
+
+```js
+export const Input = styled.TextInput.attrs({
+  placeholderTextColor: '#999',
+})`
+  flex: 1;
+  height: 40px;
+  background: #eee;
+  border-radius: 4px;
+  padding: 0 15px;
+  border: 1px solid #eee;
+`;
+```
+
+- Estilizando um `ScrolView` com styled-components/native:
+
+```js
+export const List = styled.FlatList.attrs({
+  showsVerticalScrollIndicator: false,
+})`
+  margin-top: 20px;
+`;
+```
+
+- Verifique que utilizamos `attrs({})` para estilziar propriedades especiais, que não são inseridas no css, mas sim propriedades do próprio component.
+
+- Adicionando `props` em um style:
+
+- Ex., Temos o component: `<SubmitButton loading={loading}>`
+
+- No Styled components adicionamos:
+
+```js
+opacity: ${(props) => (props.lading ? 0.7 : 1)};
+```
+
+---
+
+<h2>Adicionando Loading</h2>
+
+- Importar `ActivityIndicator` do `react-native`:
+
+```js
+import { ActivityIndicator } from 'react-native';
+```
+
+- Criar uma variavel do state que inicia como false:
+
+```js
+const [loading, setLoading] = useState(false);
+```
+
+- Antes de executar a chamada a API, seta como true, e depois como false:
+
+```js
+setLoading(true);
+
+//...
+// Chamada api
+
+setLoading(false);
+```
+----
+
+<h2>Storage</h2>
+
+No react native não possuí o localstorage como na web.
+
+Então instalamos a dependencia:
+
+```bash
+yarn add @react-native-community/async-storage
+```
+
+- Para funcionar no iOS precisa acessar a pasta `ios/` e executar `pod install`
+
+- Importar na página que desea salvar os dados:
+
+```js
+import AsyncStorage from '@react-native-community/async-storage';
+```
+
+- O AsyncStorage funciona da mesma que o localstorage, porém de forma assincrona. Dessa forma é necessário utilizar o `await`.
+
+- Para utilizar vamos adicionar o `useEffect`:
+
+```js
+// Ao iniciar
+useEffect(() => {
+  async function getStorage() {
+    const userStorage = await AsyncStorage.getItem('users');
+    if (userStorage && userStorage !== 'null') {
+      setUsers(JSON.parse(userStorage));
+    }
+  }
+
+  getStorage();
+}, []);
+
+// Quando houver alteração
+useEffect(() => {
+  AsyncStorage.setItem('users', JSON.stringify(users));
+}, [users]);
+```
+
+---
+
+<h2>Enviar informações de uma tela para outra</h2>
+
+- Na Página 1 adicionar o import:
+
+```js
+import { useNavigation } from '@react-navigation/native';
+```
+
+- Dentro de component adicionar:
+
+```js
+const navigation = useNavigation();
+```
+
+
+- Dentro de uma function como o onPress adicionar o seguinte:
+
+```js
+navigation.navigate('User', { user: userItem });
+```
+
+- Como funciona:
+
+```js
+navigation.navigate('NOME_DA_ROTA_DEFINIDA_NO_ARQUIVO_DE_ROTAS', { OBJECT_JAVASCRIPT_PARA_ENVIAR_A_OUTRA_TELA });
+```
+
+- Receber o parametro... Na Página 2 adicionar o import:
+
+```js
+import { useRoute } from '@react-navigation/native';
+```
+
+- Dentro do component adicionar o seguinte:
+
+```js
+const route = useRoute();
+const { user } = route.params;
+```
+- Ali onde estar o `{ user }` colocar o nome do parametro que foi passado pela tela 1
+
+---
+
+
+<h2>Alterar opções do Top bar</h2>
+
+- Importar o seguinte:
+
+```js
+import { useNavigation } from '@react-navigation/native';
+```
+
+- Dentro do component adicionar:
+
+```js
+const navigation = useNavigation();
+```
+
+- Exemplo de como utilizar:
+
+```js
+navigation.setOptions({
+  title: user.name,
+  // headerShown: false,
+});
+```
