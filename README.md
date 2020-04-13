@@ -401,3 +401,80 @@ navigation.setOptions({
   // headerShown: false,
 });
 ```
+
+
+---
+
+<h2>Root Import</h2>
+
+- Facilita a importação dos arquivos que estão dentro de várias pastas, ao ínves de utilizar `../../../pasta/arquivo` ficará assim `~/pasta/arquivo`;
+
+- Primeiro adicione a dependencia:
+
+```bash
+yarn add babel-plugin-root-import eslint-import-resolver-babel-plugin-root-import -D
+```
+
+- Ajustar o arquivo `babel.config.js` com o seguinte conteúdo:
+
+```js
+module.exports = {
+  presets: ['module:metro-react-native-babel-preset'],
+  plugins: [
+    [
+      'babel-plugin-root-import',
+      {
+        paths: [
+          {
+            rootPathSuffix: './src/',
+            rootPathPrefix: '~/',
+          },
+        ],
+      },
+    ],
+  ],
+};
+
+
+```
+
+- Na chave `rootPathSuffix` informamos a pasta que será utilizada no caso `./src/`
+
+- No arquivo `.eslintrc.js` adicionamos o seguinte dentro de `modules.exports`:
+
+```js
+settings: {
+    "import/resolver": {
+      "babel-plugin-root-import": {
+        "rootPathPrefix": "~",
+        "rootPathSuffix": "src"
+      }
+    }
+  }
+```
+
+- Estamos dessa forma informando que a pasta root do projeto será `src`
+
+- Crie também na raiz do projeto um arquivo `jsconfig.json` para o vscode não se perder nas importações com o seguinte conteúdo:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  }
+}
+
+```
+
+- Agora poderá utilizar `~/` ao invés de `../../`
+
+- Para surtir efeito no app é necessário realizar a seguinte comando:
+
+```bash
+react-native start --reset-cache
+```
+
+- Pois nem sempre fechando o emulador e e dando run irá funcionar
