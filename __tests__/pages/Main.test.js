@@ -1,7 +1,10 @@
 import React from 'react';
 import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import MockAdapter from 'axios-mock-adapter';
+import { useNavigation } from '@react-navigation/native';
+
 import api from '~/services/api';
 import Main from '~/pages/Main';
 /*
@@ -34,24 +37,63 @@ beforeEach(() => {
   // console.log('clear');
 });
 
+jest.mock('@react-navigation/native');
+
 describe('Main', () => {
-  it('shoud be able to add new user git', async () => {
+  it('should alert error', async () => {
+    Alert.alert = jest.fn().mockReturnValue('OK');
+    // alert
+    const user = 'gitlogin';
     const { getByText, getByTestId, debug, unmount } = render(<Main />);
-    fireEvent.changeText(getByTestId('main-input-add-user'), 'gitlogin');
+    fireEvent.changeText(getByTestId('main-input-add-user'), user);
     // debug();
     fireEvent.press(getByTestId('main-button-add-user'));
-    apiMock.onGet('users/gitlogin').reply(200, {
-      login: 'gitlogin',
+    apiMock.onGet(`users/${user}`).reply(500);
+    // debug();
+
+    process.nextTick(() => {
+      expect(Alert.alert).toHaveBeenCalled();
+      // unmount();
+    });
+  });
+
+  it('should be able validate', async () => {
+    const { getByTestId } = render(<Main />);
+    fireEvent.press(getByTestId('main-button-add-user'));
+
+    process.nextTick(() => {
+      expect(getByTestId('main-text-error-user')).toBeTruthy();
+    });
+  });
+
+  it('shoud be able to add new user git', async () => {
+    const user = 'gitlogin';
+    const { getByText, getByTestId, debug, unmount } = render(<Main />);
+    fireEvent.changeText(getByTestId('main-input-add-user'), user);
+    // debug();
+    fireEvent.press(getByTestId('main-button-add-user'));
+    apiMock.onGet(`users/${user}`).reply(200, {
       avatar: 'https://avatar',
-      name: 'Git Name',
+      avatar_url: 'https://avatar',
       bio: 'Git Bio ...',
+      login: 'gitlogin',
+      name: 'Git Name',
     });
     // debug();
+
+    const navigation = {};
+    navigation.navigate = jest.fn();
+
+    useNavigation.mockReturnValue(navigation);
 
     process.nextTick(() => {
       debug();
       expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
       expect(getByTestId('main-button-add-user')).toHaveProp('loading', false);
+      expect(getByTestId('main-button-profile-user')).toBeTruthy();
+      fireEvent.press(getByTestId('main-button-profile-user'));
+      console.log(navigation.navigate.mock.calls);
+      expect(navigation.navigate).toHaveBeenCalled();
       // unmount();
     });
   });

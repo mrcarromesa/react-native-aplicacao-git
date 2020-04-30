@@ -587,7 +587,7 @@ module.exports = {
     '!src/services/api.js',
     '!src/config/ReactotronConfig.js',
   ],
-  coverageDirectory: '__tests__/covarage',
+  coverageDirectory: '__tests__/coverage',
   moduleNameMapper: {
     '^~/(.*)': '<rootDir>/src/$1',
   },
@@ -791,4 +791,90 @@ describe('Main', () => {
   });
 });
 ```
+
+---
+
+<h2>Mock useNavigation</h2>
+
+- Para utilizar o useNavigation é necessário realizar o mock da function.
+
+```js
+import { useNavigation } from '@react-navigation/native';
+
+jest.mock('@react-navigation/native');
+
+describe('Main', () => {
+  it('shoud be able to add new user git', async () => {
+    const navigation = {};
+    navigation.navigate = jest.fn();
+
+    useNavigation.mockReturnValue(navigation);
+
+    console.log(navigation.navigate.mock.calls);
+    expect(navigation.navigate).toHaveBeenCalled();
+
+  });
+});
+```
+
+---
+
+<h2>Formik e Yup</h2>
+
+- Primeiro instale as dependencias:
+
+```bash
+yarn add yup
+```
+
+- e:
+
+```bash
+yarn add formik
+```
+
+- Para utilizar só dá uma olhada no arquivo `src/pages/Main/index.js`.
+
+- Nos testes basicamente não muda nada.
+
+---
+
+<h2>Mock Chamada ao Alert do react-native</h2>
+
+- Nessa parte iremos realizar o mock da chamada do mock do `Alert.alert`, mais detalhes no arquivo `__tests__/pages/Main.test.js`, segue o trecho:
+
+```js
+import React from 'react';
+import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import { Alert } from 'react-native'; // Esse será o módulo que sofrerá o mock.
+import AsyncStorage from '@react-native-community/async-storage';
+import MockAdapter from 'axios-mock-adapter';
+import { useNavigation } from '@react-navigation/native';
+
+import api from '~/services/api';
+import Main from '~/pages/Main';
+
+
+describe('Main', () => {
+  it('should alert error', async () => {
+    // Realizamos o mock aqui.
+    Alert.alert = jest.fn().mockReturnValue('OK');
+
+    const user = 'gitlogin';
+    const { getByText, getByTestId, debug, unmount } = render(<Main />);
+    fireEvent.changeText(getByTestId('main-input-add-user'), user);
+
+    fireEvent.press(getByTestId('main-button-add-user'));
+
+    apiMock.onGet(`users/${user}`).reply(500);
+
+    process.nextTick(() => {
+      // verificamos se é chamado.
+      expect(Alert.alert).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+- Mais detalhes: [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
 

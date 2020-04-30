@@ -29,7 +29,7 @@ module.exports = {
     '!src/services/api.js',
     '!src/config/ReactotronConfig.js',
   ],
-  coverageDirectory: '__tests__/covarage',
+  coverageDirectory: '__tests__/coverage',
   moduleNameMapper: {
     '^~/(.*)': '<rootDir>/src/$1',
   },

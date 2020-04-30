@@ -3,7 +3,7 @@
 .DS_Store
 
 #teste:
-__tests__/covarage/
+__tests__/coverage/
 
 # Xcode
 #
