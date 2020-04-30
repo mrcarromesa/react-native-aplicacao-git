@@ -561,6 +561,21 @@ jest.mock('@react-native-community/async-storage', () => ({
 ```js
 module.exports = {
   preset: '@testing-library/react-native',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-native' +
+      '|react-navigation-tabs' +
+      '|react-native-splash-screen' +
+      '|react-native-screens' +
+      '|react-native-reanimated' +
+      '|react-native-vector-icons' +
+      '|react-native-gesture-handler' +
+      '|@react-native-community' +
+      '|@react-navigation' +
+      '|@react-navigation/stack' +
+      '|react-native-iphone-x-helper' +
+      ')/)',
+  ],
   setupFiles: [
     './node_modules/react-native-gesture-handler/jestSetup.js',
     './__mocks__/useNavigation.setup.js',
