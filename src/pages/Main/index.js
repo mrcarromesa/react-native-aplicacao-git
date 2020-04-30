@@ -32,8 +32,10 @@ export default function Main() {
 
   useEffect(() => {
     async function getStorage() {
+      // console.log('users');
       const userStorage = await AsyncStorage.getItem('users');
       if (userStorage && userStorage !== 'null') {
+        // console.log(JSON.parse(userStorage));
         setUsers(JSON.parse(userStorage));
       }
     }
@@ -43,9 +45,12 @@ export default function Main() {
 
   useEffect(() => {
     AsyncStorage.setItem('users', JSON.stringify(users));
+    // console.log('users called');
+    // console.log(users);
   }, [users]);
 
   async function handleAddUser() {
+    // console.log('aqui111');
     setLoading(true);
     try {
       const response = await api.get(`users/${user}`);
@@ -56,7 +61,9 @@ export default function Main() {
         avatar: response.data.avatar_url,
       };
 
+      // console.log(data);
       setUsers([...users, data]);
+
       setUser('');
     } catch (error) {
       // console.tron.log(error);
@@ -81,10 +88,19 @@ export default function Main() {
           value={user}
           returnKeyType="send"
           onSubmitEditing={handleAddUser}
+          testID="main-input-add-user"
         />
-        <SubmitButton loading={loading} onPress={handleAddUser}>
+        <SubmitButton
+          testID="main-button-add-user"
+          loading={loading}
+          disabled={loading}
+          onPress={handleAddUser}
+        >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator
+              testID="main-activity-indicator-user"
+              color="#fff"
+            />
           ) : (
             <Icon name="add" size={20} color="#fff" />
           )}
@@ -92,6 +108,7 @@ export default function Main() {
       </Form>
 
       <List
+        testID="main-list-user"
         data={users}
         keyExtractor={(userItem) => userItem.login}
         renderItem={({ item }) => (

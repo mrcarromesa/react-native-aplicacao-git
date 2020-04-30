@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+#teste:
+__tests__/covarage/
+
 # Xcode
 #
 build/

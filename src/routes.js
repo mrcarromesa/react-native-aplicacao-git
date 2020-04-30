@@ -8,6 +8,9 @@ import User from './pages/User';
 
 const Stack = createStackNavigator();
 
+console.log('Stack');
+console.log(Stack);
+
 export default function Routes() {
   return (
     <NavigationContainer>
@@ -19,7 +22,7 @@ export default function Routes() {
           headerBackTitleVisible: false,
         }}
       >
-        <Stack.Screen name="Home" component={Main} />
+        <Stack.Screen testID="Home" name="Home" component={Main} />
         <Stack.Screen
           name="User"
           component={User}

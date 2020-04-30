@@ -478,3 +478,302 @@ react-native start --reset-cache
 ```
 
 - Pois nem sempre fechando o emulador e e dando run irá funcionar
+
+
+---
+
+<h2>Realização de Testes</h2>
+
+---
+
+<h3>Configurando o ambiente</h3>
+
+- Instalar a dependencia:
+
+```bash
+yarn add @testing-library/react-native -D
+```
+
+- Também o intelesence:
+
+```bash
+yarn add @types/jest -D
+```
+
+- Lembre de criar na raiz do projeto o arquivo `jsconfig.json`, para o vs code não se perder com o babel root import, com o seguinte conteúdo:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  }
+}
+
+```
+
+---
+**Em geral utilizo o `react-native-gesture-handler` que é utilizado juntamento com o módulo de navegação Então preciso criar o mock para o useNavigation**:
+
+- Crie a pasta na raiz do projeto `__mocks__/` e adicione o arquivo `useNavigation.setup.js`:
+
+```js
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(() => {
+    return () => {};
+  }),
+}));
+
+```
+
+**Em geral utilizo o `@react-native-community/async-storage` que é utilizado como o localstorage porém para mobile, também preciso realizar o mock para ele**:
+
+- Adicione a pasta `__mocks__/` que deverá estar na raiz do projeto, caso não exista crie ela, adicione o arquivo `async.storage.setup.js` e adicione o seguinte:
+
+```js
+global.dataAsyncStorage = {};
+
+jest.mock('@react-native-community/async-storage', () => ({
+  setItem: jest.fn((key, value) => {
+    return new Promise((resolve) => {
+      global.dataAsyncStorage[key] = value;
+      resolve(null);
+    });
+  }),
+  getItem: jest.fn((key) => {
+    return new Promise((resolve) => {
+      resolve(global.dataAsyncStorage[key]);
+    });
+  }),
+  removeItem: jest.fn((key) => {
+    return new Promise((resolve) => {
+      delete global.dataAsyncStorage[key];
+      resolve(null);
+    });
+  }),
+}));
+```
+
+- Criar na raiz do projeto o arquivo `jest.config.js` com as seguintes configurações:
+
+```js
+module.exports = {
+  preset: '@testing-library/react-native',
+  setupFiles: [
+    './node_modules/react-native-gesture-handler/jestSetup.js',
+    './__mocks__/useNavigation.setup.js',
+    './__mocks__/async.storage.setup.js',
+  ],
+  collectCoverageFrom: [
+    'src/pages/**',
+    '!src/pages/**/styles.js',
+    '!src/services/api.js',
+    '!src/config/ReactotronConfig.js',
+  ],
+  coverageDirectory: '__tests__/covarage',
+  moduleNameMapper: {
+    '^~/(.*)': '<rootDir>/src/$1',
+  },
+  testMatch: ['**/__tests__/**/*.test.js'],
+};
+
+```
+
+---
+<h2> Realizando Testes</h2>
+
+- Import o `react` e também import o:
+
+```js
+import { render, fireEvent } from '@testing-library/react-native';
+```
+
+- Utilização do fireEvent para o TextInput para o `onChange`:
+
+```js
+const { getByText, getByTestId } = render(<Component />);
+fireEvent.changeText(getByTestId('id'), 'Texto que será inserido');
+```
+
+- Utilização do fireEvent para o Button `onPress`:
+
+```js
+fireEvent.press(getByTestId('id'));
+```
+
+
+- No elemento do component podemos utilizar o id `testID`:
+
+```js
+<Text testID="id">Texto</Text>
+```
+
+
+---
+
+<h2>Lib para trabalhar de forma semelhante com o jest-dom do reactjs</h2>
+
+É muito útil para obter os atributos dos elementos:
+
+[jest-native](https://github.com/testing-library/jest-native)
+
+- Instale:
+
+```bash
+yarn add @testing-library/jest-native -D
+```
+
+- Como iremos utilizar em vários arquivos essa lib adicionamos no `jest.config.js`:
+
+```js
+setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
+```
+
+
+---
+
+<h2>Mock RectButton</h2>
+
+- O `RectButton` não funciona o fireEvent `press`, para isso resolvi realizando o `mock` Transformando ele em um Button:
+
+```js
+// https://github.com/testing-library/native-testing-library/issues/113#issuecomment-607796505
+jest.mock('react-native-gesture-handler', () => ({
+  RectButton: (props) => {
+    const { Button } = require('react-native');
+    return <Button {...props} />;
+  },
+}));
+```
+
+- Mais detalhes [Resolve](https://github.com/testing-library/native-testing-library/issues/113#issuecomment-607796505)
+
+---
+
+<h2>Mock AsyncStorage com Teste Async</h2>
+
+- Essa parte parece um tanto complexa, como envolve atualização do useState e consequentemente de um component que sofre renderização após alteração do useState e de forma asyncrona, o jest/react reclama que precisa que ao atualizar um componente utilize o `act(() => {})` do `react-dom/test-utils`, porém não estou mexendo com dom, estamos no react-native afinal, para resolver isso utilizei o seguinte conforme codigo em `__tests__/pages/Main.test.js`, segue trecho:
+
+```js
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+// Antes de continuar configure o mock do AsyncStorage, nos passos acima.
+import AsyncStorage from '@react-native-community/async-storage'; // Importei para simular uma informação já preenchida ao acessar a tela.
+import Main from '~/pages/Main';
+
+jest.useFakeTimers(); // Forçar aguardar processos assincronos
+
+beforeEach(() => {
+  cleanup();
+});
+
+// Transformar RectButton em Button, já visto antes
+jest.mock('react-native-gesture-handler', () => ({
+  RectButton: (props) => {
+    const { Button } = require('react-native');
+    return <Button {...props} />;
+  },
+}));
+
+describe('Main', () => {
+
+// Para utilizar o await precisamos informar que a function executa de forma async
+it('shoud be able save async storage', async () => {
+
+    // dados fake
+    const data = [{
+      login: 'gitlogin',
+      avatar: 'https://avatar',
+      name: 'Git Name',
+      bio: 'Git Bio ...',
+    }];
+    await AsyncStorage.setItem('users', JSON.stringify(data));
+
+    // Após inserir o dado fake renderizo o component
+    const { getByText, getByTestId, debug, unmount } = render(<Main />);
+
+    // PULO DO GATO
+    // como é um evento async e o react precisa de um tempo para atualizar o useState, utilizamos
+    // esse recurso process.nextTick(() => {})
+    process.nextTick(() => {
+      // Inserir o expect() aqui
+      debug();
+      // expect().toBe();
+    });
+  });
+});
+```
+
+- Me basiei em [Github](https://github.com/facebook/react/issues/14769#issuecomment-461896777)
+
+- As principais informações/comandos estão comentas no trecho de código acima.
+
+
+---
+
+<h2>Mock Axios API chamando a partir do button onPress Async</h2>
+
+- Primeiro vamos instalar uma dependencia para ajudar nessa tarefa:
+
+```bash
+yarn add axios-mock-adapter
+```
+
+- Mais detalhes no arquivo `__tests__/pages/Main.test.js` no seguinte trecho:
+
+```js
+import React from 'react';
+import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import MockAdapter from 'axios-mock-adapter'; // Importar dependencia
+import api from '~/services/api'; // Importar mesmo script utilizado pelo componente
+import Main from '~/pages/Main';
+
+const apiMock = new MockAdapter(api); // Realizando o mock
+
+jest.useFakeTimers(); // Forçar aguardar processos assincronos
+
+beforeEach(() => {
+  cleanup();
+});
+
+// Transformar RectButton em Button, já visto antes
+jest.mock('react-native-gesture-handler', () => ({
+  RectButton: (props) => {
+    const { Button } = require('react-native');
+    return <Button {...props} />;
+  },
+}));
+
+describe('Main', () => {
+  // Processo async
+  it('shoud be able to add new user git', async () => {
+    // render do component
+    const { getByText, getByTestId, debug, unmount } = render(<Main />);
+
+    // Usuário quer será enviado
+    fireEvent.changeText(getByTestId('main-input-add-user'), 'gitlogin');
+    // Botão pressionado
+    fireEvent.press(getByTestId('main-button-add-user'));
+
+    // captura chamada get feitas para url 'users/id' com o status e a resposta
+    apiMock.onGet('users/gitlogin').reply(200, {
+      login: 'gitlogin',
+      avatar: 'https://avatar',
+      name: 'Git Name',
+      bio: 'Git Bio ...',
+    });
+
+    // PULO DO GATO
+    // Apos processo async faz testes:
+    process.nextTick(() => {
+      debug();
+      expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
+      expect(getByTestId('main-button-add-user')).toHaveProp('loading', false);
+    });
+  });
+});
+```
+
