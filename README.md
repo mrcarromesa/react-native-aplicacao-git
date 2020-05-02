@@ -486,6 +486,8 @@ react-native start --reset-cache
 
 ---
 
+[Testing](https://reactnative.dev/docs/testing-overview)
+
 <h3>Configurando o ambiente</h3>
 
 - Instalar a dependencia:
