@@ -4,10 +4,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-@import AppCenter;
-@import AppCenterAnalytics;
-@import AppCenterCrashes;
-
 #if DEBUG
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -31,11 +27,6 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [MSAppCenter start:@"545730d8-d636-4e84-924f-29301f94c982" withServices:@[
-    [MSAnalytics class],
-    [MSCrashes class]
-  ]];
-  
 #if DEBUG
   InitializeFlipper(application);
 #endif

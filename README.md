@@ -880,3 +880,205 @@ describe('Main', () => {
 
 - Mais detalhes: [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
 
+
+---
+
+<h2>CodePush</h2>
+- Servirá para conseguir atuailizar a aplicação já estiver em produção e em ambiente de staging, sem precisare enviar uma nova versão para loja de aplicativos.
+
+- Isso é uma vantagem do React Native sobre outras liguagens de desenvolvimento de aplicativos, pois o código que ele utiliza por tras é um código javascript, e esse código javascript através do metodo blunder do React Native é convertido no final das contas para um arquivo único JS, que contem todo o código da aplicação na parte de JS, então quando for feita alguma alteração na aplicação que muda apenas código JS e não instala nenhuma dependencia nativa que precise fazer o link por exemplo. Podemos enviar esse código JS, quando o usuário abre o aplicativo ele realiza o download da nova versão automáticamente do codepush e instala de forma automática, dessa forma o usuário não precisa abrir a loja de aplicativos e baixar uma nova versão, e para o desesnvolvedor que não precisa enviar a aplicação para loja e esperar até ser aprovado pela loja e atualizado nos usuários.
+
+- Instruções de como instalar o code push para o react native: [React Native Module for CodePush](https://github.com/Microsoft/react-native-code-push)
+
+- Instalação configuração:
+
+- Execute no terminal na pasta raiz do projeto o seguinte comando:
+
+```bash
+yarn add react-native-code-push
+```
+
+### old Será removido
+- Para adicionar o modulo tanto para android e para ios execute o comando:
+
+```bash
+yarn react-native link react-native-code-push
+```
+
+- Provavelmente será perguntado de deployment key para Android e IOS, só dá Enter,
+será ignorado por enquanto, depois serão adicionadas.
+
+### /old Será removido
+
+- Parte de configuração, no arquivo `src/index.js` vamos inserir alguns códigos:
+
+- Import o code-push
+
+```js
+import CodePush from 'react-native-code-push';
+```
+
+- No `export default App` no final do arquivo altere para isso:
+
+```js
+export default CodePush({
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+})(App);
+```
+
+- A `CheckFrequency` tem pelo menos 3 opções: `ON_APP_RESUME`, `ON_APP_START`, `MANUAL`
+
+- `MANUAL` É interessante pois nós mesmo podemos escolher quando efetivar as atualizações, no caso criar uma tela para atualização.
+
+- `ON_APP_RESUME`, caso o usuário estiver utilizando o app, a atulização identifica isso e só procede com a atualização quando o app entrar em background
+
+- `ON_APP_START` o app irá reiniciar ou voltar para tela inicial assim que a atualização for concluída.
+
+----
+
+<h2>Deploy</h2>
+
+- Usaremos o [App Center](https://appcenter.ms/)
+
+- Adicione um novo app primeiro para Android plataforma React Native
+
+- No adicione de forma global o  `appcenter-cli`:
+
+```bash
+yarn global add appcenter-cli
+```
+
+- Após instalar rodar o seguinte comando:
+
+```bash
+appcenter login
+```
+
+- Irá abrir uma página no browser, só copiar o código e colar no terminal onde pede
+
+- Para listar os apps já criados no appcenter execute o seguinte no terminal:
+
+```bash
+appcenter apps list
+```
+
+- É importante criar um outro ambiente que fica entre o debug e o release, o que será chamado de stage,
+que serve para equipe de desenvolvimento testar a aplicação antes de ir definitivamente para produção.
+
+- Primeiro
+
+- No appcenter no aplicativo que foi criado lá, no menu a esquerda, vá em `Distribute > CodePush` aperte no botão `Create standard deployments`
+
+- Executar o seguinte comando:
+
+```bash
+appcenter codepush deployment list -a ORGANIZACAO/NOME_DO_APP -k
+```
+
+- Suponde que tenha essa url: https://appcenter.ms/users/my_user/apps/my-app
+
+- A ORGANIZACAO será `my_user`
+- O NOME_DO_APP  será `my-app`
+
+- o `-k` é para listar as chaves
+
+- Será gerado uma chave para Staging e um para production, essas são as chaves que o codepush irá utilizar para ele conseguir enviar o código para aplicação sem precisar enviar para lojas de aplicativos.
+
+- **Android**
+1. No arquivo `android/settings.gradle`:
+
+- alterei/adicionei isso:
+
+```gradle
+  include ':app', ':react-native-code-push'
+  project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')
+```
+
+- O meu arquivo estava assim:
+
+```gradle
+rootProject.name = 'modulo06'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+```
+
+- E agora com as alterações ficou assim:
+
+```gradle
+rootProject.name = 'modulo06'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app', ':react-native-code-push'
+project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')
+```
+
+2. No arquivo `android/app/build.gradle` localize a linha não comentada `apply from: "../../node_modules/react-native/react.gradle"` e abaixo adicione:
+
+```gradle
+  apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+```
+
+3. Update the `MainApplication.java` file to use CodePush via the following changes:
+
+```java
+...
+// 1. Import the plugin class.
+import com.microsoft.codepush.react.CodePush;
+
+public class MainApplication extends Application implements ReactApplication {
+
+    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+        ...
+
+        // 2. Override the getJSBundleFile method in order to let
+        // the CodePush runtime determine where to get the JS
+        // bundle location from on each app start
+        @Override
+        protected String getJSBundleFile() {
+            return CodePush.getJSBundleFile();
+        }
+    };
+}
+```
+
+4 - Abra o arquivo `android/app/build.gradle`, Encontre a seção `android { buildTypes {} }` e realize as alterações:
+
+```groovy
+android {
+    ...
+    buildTypes {
+        debug {
+            ...
+            // Note: CodePush updates should not be tested in Debug mode as they are overriden by the RN packager. However, because CodePush checks for updates in all modes, we must supply a key.
+            resValue "string", "CodePushDeploymentKey", '""'
+            ...
+        }
+
+        releaseStaging {
+            ...
+            resValue "string", "CodePushDeploymentKey", '"<INSERT_STAGING_KEY>"'
+
+            // Note: It is a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
+            // Add the following line if not already there
+            matchingFallbacks = ['release']
+            ...
+        }
+
+        release {
+            ...
+            resValue "string", "CodePushDeploymentKey", '"<INSERT_PRODUCTION_KEY>"'
+            ...
+        }
+    }
+    ...
+}
+```
+
+- No `debug` a parte onde está `'""'` é para informar que será um string vazia.
+- No `matchingFallbacks` informa que no caso de não encontrar nenhuma configuração necessário, procurar dentro do informado.
+
+- Dentro do release comentei essa linha `signingConfig signingConfigs.debug`
+
+*IMPORTANTE: Se for o seu caso, remova a key `CodePushDeploymentKey` de `strings.xml`, do contrário ignore isso*
+
+
+
