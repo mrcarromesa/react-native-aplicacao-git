@@ -15,7 +15,7 @@ jobs:
                 name: "Run Jest and Collect Coverage Reports"
                 command: npm test --coverage
             - store_artifacts:
-                path: coverage
+                path: /tmp/screenshots
 workflows:
     build-and-test:
       jobs:
