@@ -1,5 +1,10 @@
 import React from 'react';
-import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import {
+  render,
+  fireEvent,
+  cleanup,
+  wait,
+} from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import MockAdapter from 'axios-mock-adapter';
@@ -51,9 +56,11 @@ describe('Main', () => {
     apiMock.onGet(`users/${user}`).reply(500);
     // debug();
 
-    process.nextTick(() => {
-      expect(Alert.alert).toHaveBeenCalled();
-      // unmount();
+    await wait(() => {
+      process.nextTick(() => {
+        expect(Alert.alert).toHaveBeenCalled();
+        // unmount();
+      });
     });
   });
 
@@ -61,8 +68,10 @@ describe('Main', () => {
     const { getByTestId } = render(<Main />);
     fireEvent.press(getByTestId('main-button-add-user'));
 
-    process.nextTick(() => {
-      expect(getByTestId('main-text-error-user')).toBeTruthy();
+    await wait(() => {
+      process.nextTick(() => {
+        expect(getByTestId('main-text-error-user')).toBeTruthy();
+      });
     });
   });
 
@@ -86,15 +95,20 @@ describe('Main', () => {
 
     useNavigation.mockReturnValue(navigation);
 
-    process.nextTick(() => {
-      debug();
-      expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
-      expect(getByTestId('main-button-add-user')).toHaveProp('loading', false);
-      expect(getByTestId('main-button-profile-user')).toBeTruthy();
-      fireEvent.press(getByTestId('main-button-profile-user'));
-      console.log(navigation.navigate.mock.calls);
-      expect(navigation.navigate).toHaveBeenCalled();
-      // unmount();
+    await wait(() => {
+      process.nextTick(() => {
+        // debug();
+        expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
+        expect(getByTestId('main-button-add-user')).toHaveProp(
+          'loading',
+          false
+        );
+        expect(getByTestId('main-button-profile-user')).toBeTruthy();
+        fireEvent.press(getByTestId('main-button-profile-user'));
+        console.log(navigation.navigate.mock.calls);
+        expect(navigation.navigate).toHaveBeenCalled();
+        // unmount();
+      });
     });
   });
 
@@ -130,9 +144,12 @@ describe('Main', () => {
     // debug();
 
     // https://github.com/facebook/react/issues/14769#issuecomment-461896777
-    process.nextTick(() => {
-      // debug();
-      expect(getByText('Git Name')).toBeTruthy();
+
+    await wait(() => {
+      process.nextTick(() => {
+        // debug();
+        expect(getByText('Git Name')).toBeTruthy();
+      });
     });
 
     // await waitForElement(() => debug());

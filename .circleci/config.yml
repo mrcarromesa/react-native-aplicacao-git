@@ -11,8 +11,11 @@ jobs:
           steps:
             - run: npm install
             - run: npm test
-      - store_test_results:
-          path: test-results
+            - run:
+                name: "Run Jest and Collect Coverage Reports"
+                command: jest --collectCoverage=true
+            - store_artifacts:
+                path: coverage
 workflows:
     build-and-test:
       jobs:

@@ -675,7 +675,7 @@ jest.mock('react-native-gesture-handler', () => ({
 
 ```js
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, wait } from '@testing-library/react-native';
 // Antes de continuar configure o mock do AsyncStorage, nos passos acima.
 import AsyncStorage from '@react-native-community/async-storage'; // Importei para simular uma informação já preenchida ao acessar a tela.
 import Main from '~/pages/Main';
@@ -714,10 +714,12 @@ it('shoud be able save async storage', async () => {
     // PULO DO GATO
     // como é um evento async e o react precisa de um tempo para atualizar o useState, utilizamos
     // esse recurso process.nextTick(() => {})
-    process.nextTick(() => {
-      // Inserir o expect() aqui
-      debug();
-      // expect().toBe();
+    await wait(() => {
+      process.nextTick(() => {
+        // Inserir o expect() aqui
+        debug();
+        // expect().toBe();
+      });
     });
   });
 });
@@ -742,7 +744,7 @@ yarn add axios-mock-adapter
 
 ```js
 import React from 'react';
-import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import { render, fireEvent, cleanup, wait } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import MockAdapter from 'axios-mock-adapter'; // Importar dependencia
 import api from '~/services/api'; // Importar mesmo script utilizado pelo componente
@@ -785,10 +787,12 @@ describe('Main', () => {
 
     // PULO DO GATO
     // Apos processo async faz testes:
-    process.nextTick(() => {
-      debug();
-      expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
-      expect(getByTestId('main-button-add-user')).toHaveProp('loading', false);
+    await wait(() => {
+      process.nextTick(() => {
+        debug();
+        expect(getByTestId('main-input-add-user')).toHaveProp('value', '');
+        expect(getByTestId('main-button-add-user')).toHaveProp('loading', false);
+      });
     });
   });
 });
@@ -847,7 +851,7 @@ yarn add formik
 
 ```js
 import React from 'react';
-import { render, fireEvent, cleanup } from '@testing-library/react-native';
+import { render, fireEvent, cleanup, wait } from '@testing-library/react-native';
 import { Alert } from 'react-native'; // Esse será o módulo que sofrerá o mock.
 import AsyncStorage from '@react-native-community/async-storage';
 import MockAdapter from 'axios-mock-adapter';
@@ -870,9 +874,11 @@ describe('Main', () => {
 
     apiMock.onGet(`users/${user}`).reply(500);
 
-    process.nextTick(() => {
-      // verificamos se é chamado.
-      expect(Alert.alert).toHaveBeenCalled();
+    await wait(() => {
+      process.nextTick(() => {
+        // verificamos se é chamado.
+        expect(Alert.alert).toHaveBeenCalled();
+      });
     });
   });
 });
@@ -1080,5 +1086,48 @@ android {
 
 *IMPORTANTE: Se for o seu caso, remova a key `CodePushDeploymentKey` de `strings.xml`, do contrário ignore isso*
 
+### Inserir os branches no git:
 
+- Criar o projeto no github, seguir as instruções do github
+
+- Enviar o projeto para o git para o branch master:
+  - `git add .`
+  - `git commit -m "Comentário"`
+  - `git push origin master`
+- Criar um novo branch:
+  - `git checkout -b staging`
+  - `git push origin staging`
+- Voltar para o branch `master`
+  - `git checkout master`
+
+- No git informar o brach master como default, `Settings > Branches` selecionar o `master` como padrão e atualizar
+
+
+### adicionando projeto no App Center
+
+- Android
+
+- No terminal acessar uma pasta para salvar a chave que será gerado para o staging
+
+- Mais detalhes: [Publishing to Google Play Store](https://reactnative.dev/docs/signed-apk-android)
+
+- E no terminal inserir o seguinte comando:
+
+
+```bash
+keytool -genkeypair -v -keystore NOME_DA_CHAVE_QUE_QUERO_INSERIR.keystore -alias APELIDO_DA_MINHA_CHAVE -keyalg RSA -keysize 2048 -validity 10000
+```
+
+- No lugar de `NOME_DA_CHAVE_QUE_QUERO_INSERIR` insira um nome, sem espaço ascento, ou caracter especial
+- No lugar de `APELIDO_DA_MINHA_CHAVE` insira um nome, sem espaço ascento, ou caracter especial e armazene essa info em um local seguro.
+
+- Ao pressionar enter siga os passos:
+
+- Informe uma senha
+- Confirme a senha
+- Armazene em local seguro a senha, para quando precisar utilizar novamente.
+- Informe os dados que é solicitado e pressione enter em todos os passos
+- Umas das perguntas irá solicitar se está tudo correto, verifique se está tudo ok e informe yes
+- Informe a senha da criptografia
+- Armazene também essa senha em um local seguro.
 
