@@ -105,7 +105,7 @@ describe('Main', () => {
         );
         expect(getByTestId('main-button-profile-user')).toBeTruthy();
         fireEvent.press(getByTestId('main-button-profile-user'));
-        console.log(navigation.navigate.mock.calls);
+        // console.log(navigation.navigate.mock.calls);
         expect(navigation.navigate).toHaveBeenCalled();
         // unmount();
       });
