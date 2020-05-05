@@ -10,4 +10,4 @@ jobs:
           name: "Run Jest and Collect Coverage Reports"
           command: test --collectCoverage=true
       - store_artifacts:
-          path: coverage
+          path: __tests__/coverage
