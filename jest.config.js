@@ -1,4 +1,7 @@
 module.exports = {
+  bail: false, // necessario circleci
+  clearMocks: true, // necessario circleci
+  collectCoverage: true, // necessario circleci
   preset: '@testing-library/react-native',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
@@ -29,6 +32,7 @@ module.exports = {
     '!src/services/api.js',
     '!src/config/ReactotronConfig.js',
   ],
+  coverageReporters: ['json', 'lcov'], // necessario circleci
   coverageDirectory: '__tests__/coverage',
   moduleNameMapper: {
     '^~/(.*)': '<rootDir>/src/$1',
