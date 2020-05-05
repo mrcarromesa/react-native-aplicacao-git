@@ -24,15 +24,3 @@ jobs:
                 command: npm run test
             - store_artifacts:
                 path: __tests__/coverage
-workflows:
-  development_buid_and_test:
-    jobs:
-      - build:
-          filters:
-            branches:
-              ignore:
-                - develop
-                - sandbox
-      - test:
-          requires:
-            - build
