@@ -32,7 +32,6 @@ workflows:
             branches:
               ignore:
                 - develop
-                - master
                 - sandbox
       - test:
           requires:
