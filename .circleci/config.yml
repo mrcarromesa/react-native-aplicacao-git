@@ -1,22 +1,13 @@
-version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+version: 2
 jobs:
-  build-and-test:
-    executor:
-      name: node/default
+  build:
+    docker:
+      - image: circleci/node:10.0-browsers
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
-            - run:
-                name: "Run Jest and Collect Coverage Reports"
-                command: npm test --coverage
-            - store_artifacts:
-                path: /tmp/screenshots
-workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+      - run: npm install
+      - run:
+          name: "Run Jest and Collect Coverage Reports"
+          command: jest --collectCoverage=true
+      - store_artifacts:
+          path: coverage
