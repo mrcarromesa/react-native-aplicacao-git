@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "739265645242",
+    "firebase_url": "https://pushfirstappphonegap.firebaseio.com",
+    "project_id": "pushfirstappphonegap",
+    "storage_bucket": "pushfirstappphonegap.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739265645242:android:5237992b3b6e12c2775083",
+        "android_client_info": {
+          "package_name": "com.modulo06"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739265645242-hsjlvsruo1gs7mkc0shdmlbpfkg05b8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Hv7k8Ir0J4aA8M2Pl5VfCETyeK61vGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739265645242-hsjlvsruo1gs7mkc0shdmlbpfkg05b8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,6 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import Push from './pages/Push';
 import Main from './pages/Main';
 import User from './pages/User';
 
@@ -22,6 +23,7 @@ export default function Routes() {
           headerBackTitleVisible: false,
         }}
       >
+        <Stack.Screen testID="Push" name="Push" component={Push} />
         <Stack.Screen testID="Home" name="Home" component={Main} />
         <Stack.Screen
           name="User"

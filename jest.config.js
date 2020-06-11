@@ -1,5 +1,5 @@
 module.exports = {
-  bail: false, // necessario circleci
+  bail: true, // necessario circleci
   clearMocks: true, // necessario circleci
   collectCoverage: true, // necessario circleci
   preset: '@testing-library/react-native',
