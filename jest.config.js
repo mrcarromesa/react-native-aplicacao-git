@@ -26,8 +26,8 @@ module.exports = {
     './__mocks__/async.storage.setup.js',
   ],
   collectCoverageFrom: [
-    'src/pages/**',
-    'src/routes.js',
+    'src/pages/**/*.js',
+    '!src/routes.js',
     '!src/pages/**/styles.js',
     '!src/services/api.js',
     '!src/config/ReactotronConfig.js',
